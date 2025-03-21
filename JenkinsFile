@@ -1,13 +1,13 @@
 pipeline {
   agent any
   environment {
-    GIT_URL = 'https://github.com/YeshwanthYolar/springboot-jenkins.git'
+    GIT_URL = 'https://github.com/khadar09/springboot.git'
   }
   stages {
     stage('Checkout') {
       steps {
         sh 'echo passed'
-        git branch: 'main', url: GIT_URL
+        git branch: 'master', url: GIT_URL
       }
     }
     stage('Build and Test') {
@@ -28,7 +28,7 @@ pipeline {
     }
     stage('Build and Push Docker Image') {
       environment {
-        DOCKER_IMAGE = "yeshwanth410/ultimate-cicd:${BUILD_NUMBER}"
+        DOCKER_IMAGE = "tkhadarbasha/springboot:${BUILD_NUMBER}"
         REGISTRY_CREDENTIALS = credentials('docker-cred')
       }
       steps {
@@ -43,19 +43,19 @@ pipeline {
     }
     stage('Update Deployment File') {
       environment {
-        GIT_REPO_NAME = "springboot-jenkins"
-        GIT_USER_NAME = "YeshwanthYolar"
+        GIT_REPO_NAME = "springboot"
+        GIT_USER_NAME = "khadar09"
       }
       steps {
         withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
           sh '''
-            git config user.email "yolaryeshwanth@gmail.com"
-            git config user.name "YeshwanthYolar"
+            git config user.email "tkhadar09@gmail.com"
+            git config user.name "khadar09"
             BUILD_NUMBER=${BUILD_NUMBER}
-            sed -i "s|image: yeshwanth410/ultimate-cicd:[^ ]*|image: yeshwanth410/ultimate-cicd:${BUILD_NUMBER}|g" spring-boot-app-manifests/deployment.yml
+            sed -i "s|image: tkhadarbasha/springboot:[^ ]*|image: tkhadarbasha/springboot:${BUILD_NUMBER}|g" spring-boot-app-manifests/deployment.yml
             git add spring-boot-app-manifests/deployment.yml
             git commit -m "Update deployment image to version ${BUILD_NUMBER}"
-            git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
+            git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:master
           '''
         }
       }
