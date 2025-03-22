@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: spring-boot-app
-        image: tkhadarbasha/springboot:replace
+        image: tkhadarbasha/springboot:1
         ports:
         - containerPort: 8081
